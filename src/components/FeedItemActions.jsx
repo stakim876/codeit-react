@@ -1,36 +1,58 @@
-const likeCount = 1240; // 좋아요 수 (JS 변수)
+import { useState } from "react";
+import styles from './FeedItem.module.scss';
+import {
+  FaHeart,
+  FaRegBookmark,
+  FaRegComment,
+  FaRegHeart,
+  FaRegPaperPlane,
+} from 'react-icons/fa6';
 
-// 좋아요 / 댓글 / 공유 / 저장 + 좋아요 개수
-const FeedItemActions = () => {
+// 좋아요 토글. liked가 true면 채운 하트+1, false면 빈 하트-1
+const FeedItemActions = ({ likeCount }) => {
+
+  const [like, setLike] = useState({
+    liked: false,
+    count: likeCount
+  });
+
+  const handleLike = () => {
+    setLike({
+      ...like,
+      liked: !like.liked,
+      count: like.liked ? like.count - 1 : like.count + 1
+    });
+  };
+
   return (
-    <div className='actions'>
-      <div className='actionButtons'>
-        <div className='leftButtons'>
+    <div className={styles.actions}>
+      <div className={styles.actionButtons}>
+        <div className={styles.leftButtons}>
           <button
             type='button'
-            className='actionButton'>
-            ♡
+            className={`${styles.actionButton} ${like.liked ? styles.liked : ''}`}
+            onClick={handleLike}>
+            {like.liked ? <FaHeart /> : <FaRegHeart />}
           </button>
           <button
             type='button'
-            className='actionButton'>
-            💬
+            className={styles.actionButton}>
+            <FaRegComment />
           </button>
           <button
             type='button'
-            className='actionButton'>
-            ↗
+            className={styles.actionButton}>
+            <FaRegPaperPlane />
           </button>
         </div>
         <button
           type='button'
-          className='actionButton'>
-          🔖
+          className={styles.actionButton}>
+          <FaRegBookmark />
         </button>
       </div>
-      <div className='likes'>
-        {/* { } 안에 JS. toLocaleString()은 1,240처럼 쉼표 넣기 */}
-        좋아요 <span>{likeCount.toLocaleString()}</span>개
+      <div className={styles.likes}>
+        좋아요 <span>{like.count.toLocaleString()}</span>개
       </div>
     </div>
   );

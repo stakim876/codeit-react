@@ -1,29 +1,37 @@
-// 게시물 위쪽: 프로필, 유저명, 더보기
-const FeedItemHeader = () => {
+import styles from './FeedItem.module.scss';
+import { FaEllipsis } from 'react-icons/fa6';
+
+// 게시물 위쪽: 프로필 사진 + 유저명. 이미지가 없으면 기본 주소 사용
+const FeedItemHeader = ({
+  username,
+  profileImage = 'https://picsum.photos/seed/default/40/40',
+}) => {
   return (
-    <header className='header'>
-      <div className='userInfo'>
+    <header className={styles.header}>
+      <div className={styles.userInfo}>
         <a
-          href='/jaehoon'
-          className='profileLink'>
-          <div className='profileImage'>
-            <img
-              src='https://picsum.photos/seed/jaehoon/40/40'
-              alt='jaehoon의 프로필'
-            />
-          </div>
-        </a>
-        <div className='userDetails'>
-          <a
-            href='/jaehoon'
-            className='username'>
-            jaehoon
+          href={`/${username}`}
+          className={styles.profileLink}>
+          <div className={styles.profileImage}>
+             <img
+               src={profileImage}
+               alt={`${username}의 프로필`}
+               />
+            </div>  
           </a>
-        </div>
+          <div className={styles.userDetails}>
+            <a 
+              href={`/${username}`}
+              className={styles.username}>
+               {username}  
+              </a>
+          </div>
       </div>
-      <button className='optionsButton'>...</button>
-    </header>  
-  );  
+      <button className={styles.optionsButton}>
+        <FaEllipsis />
+      </button>
+    </header>
+  );
 };
 
 export default FeedItemHeader;

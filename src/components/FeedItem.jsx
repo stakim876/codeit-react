@@ -1,28 +1,58 @@
 import FeedItemHeader from './FeedItemHeader.jsx';
 import FeedItemActions from './FeedItemActions.jsx';
 import FeedItemContent from './FeedItemContent.jsx';
+import FeedItemComments from './FeedItemComments.jsx';
+import CommentForm from './CommentForm.jsx';
+import CommentArea from './CommentArea.jsx';
 
-// 게시물 1개 = 헤더 + 이미지 + 액션 버튼 조합
-const FeedItem = () => {
+import style from './FeedItem.module.scss';
+import carousel from './Carousel.module.scss';
+
+// 게시물 1개. App에서 받은 props를 헤더/이미지/액션/캡션/댓글로 나눠 넘김
+// .module.scss → className={style.post} 처럼 이 파일 전용 스타일
+const FeedItem = ({
+  username,
+  profileImage,
+  postImage,
+  postAlt,
+  content,
+  minutesAgo,
+  likeCount,
+  commentCount,
+}) => {
   return (
-    <article className='post'>
-     <FeedItemHeader />
+    <article className={style.post}>
+      <FeedItemHeader
+        username={username}
+        profileImage={profileImage}
+        />
 
-     {/* 본문 이미지 */}
-     <div className='imageContainer'>
-      <img
-        src='https://picsum.photos/seed/post1/600/600'
-        alt='한강에서 찍은 노을 사진'
-      />
-    </div>
+        <div className={style.imageContainer}>
+          <div className={carousel.carouselSlide}>
+            <img
+              src={postImage}
+              alt={postAlt}
+            />  
+          </div>
+        </div>
 
-    <FeedItemActions />
+        <FeedItemActions likeCount={likeCount} />
 
-    {/* 캡션 자리. FeedItemContent를 여기에 넣으면 됨 */}
-    <div className='content'>
-  </div>
-  </article>            
+        <div className={style.content}>
+          <FeedItemContent
+            username={username}
+            content={content}
+            minutesAgo={minutesAgo}
+          />
+        </div>
+
+        <CommentArea>
+          <FeedItemComments commentCount={commentCount} />
+          <CommentForm />
+          </CommentArea>    
+    </article>
   );
 };
+
 
 export default FeedItem;
