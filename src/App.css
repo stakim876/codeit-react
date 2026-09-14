@@ -173,8 +173,14 @@
     border: 5px solid transparent;
   }
 
+  /* 왼쪽 눈금 */
   &::before {
     left: 0;
+    border-right-color: var(--border);
+  }
+  /* 오른쪽 눈금. ::after는 요소 뒤에 그리는 가상 요소 */
+  &::after {
+    right: 0;
     border-right-color: var(--border);
   }
 }
