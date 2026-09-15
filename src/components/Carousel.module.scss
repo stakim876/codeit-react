@@ -1,5 +1,4 @@
-
-// src/components/common/Carousel/Carousel.module.scss
+// 이미지 슬라이드. 트랙을 밀어서 한 장씩 보여 줌
 .carouselContainer {
   position: relative;
   width: 100%;
@@ -71,8 +70,7 @@
   }
 }
 
-// src/components/common/Carousel/Carousel.modul.scss
-
+// 더블클릭 하트. heartPop 애니메이션이 끝나면 사라짐
 .doubleClickHeart {
   position: absolute;
   top: 50%;
