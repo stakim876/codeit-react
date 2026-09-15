@@ -1,10 +1,11 @@
 import styles from './FeedItem.module.scss';
 import { FaEllipsis } from 'react-icons/fa6';
 
-// 게시물 위쪽: 프로필 사진 + 유저명. 이미지가 없으면 기본 주소 사용
+// 게시물 위쪽: 프로필 + 유저명. 옵션 버튼을 누르면 onDelete
 const FeedItemHeader = ({
   username,
   profileImage = 'https://picsum.photos/seed/default/40/40',
+  onDelete,
 }) => {
   return (
     <header className={styles.header}>
@@ -27,7 +28,7 @@ const FeedItemHeader = ({
               </a>
           </div>
       </div>
-      <button className={styles.optionsButton}>
+      <button type='button' className={styles.optionsButton} onClick={onDelete}>
         <FaEllipsis />
       </button>
     </header>
