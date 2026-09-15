@@ -1,4 +1,3 @@
-// ~/instagram-react/src/components/FeedItemActions.jsx
 import { useState } from "react";
 import styles from './FeedItem.module.scss';
 import {
@@ -17,7 +16,7 @@ const FeedItemActions = ({ likeCount }) => {
     count: likeCount
   });
 
-  // 좋아요 버튼에 붙은 이벤트 핸들링
+  // liked를 뒤집고, 이미 눌렀으면 -1 아니면 +1
   const handleLike = () => {
     setLike({
       ...like,
