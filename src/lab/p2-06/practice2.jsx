@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // 화면만 그림. 숫자와 클릭 처리는 부모가 props로 내려줌
-const CounterViw = ({ label, count, onCounterClick }) => {
+const CounterView = ({ label, count, onCounterClick }) => {
   console.log(`CounterView ${label} 실행`);
   return (
     <button onClick={onCounterClick}>
@@ -11,7 +11,7 @@ const CounterViw = ({ label, count, onCounterClick }) => {
 };
 
 // state를 부모로 올리면 A만 눌러도 부모가 다시 실행되고 A·B가 둘 다 다시 그려짐
-const LiftdPanel = () => {
+const LiftedPanel = () => {
   console.log('LiftedPanel 실행');
   
   const [countA, setCountA] = useState(0);
@@ -19,18 +19,18 @@ const LiftdPanel = () => {
 
   return (
     <>
-     <CounterViw
-       label='A'
-       count={countA}
-       onCounterClick={() => setCountA(countA + 1)}
-    />
-    <CounterViw
-      label='B'
-      count={countB}
-      onCounterClick={() => setCountB(countB + 1)}
-    />     
+      <CounterView
+        label='A'
+        count={countA}
+        onCounterClick={() => setCountA(countA + 1)}
+      />
+      <CounterView
+        label='B'
+        count={countB}
+        onCounterClick={() => setCountB(countB + 1)}
+      />
     </>
   );
 };
 
-export default LiftdPanel;
+export default LiftedPanel;

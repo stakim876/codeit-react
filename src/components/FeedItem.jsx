@@ -8,8 +8,7 @@ import CommentArea from './CommentArea.jsx';
 import style from './FeedItem.module.scss';
 import carousel from './Carousel.module.scss';
 
-// 게시물 1개. App에서 받은 props를 헤더/이미지/액션/캡션/댓글로 나눠 넘김
-// .module.scss → className={style.post} 처럼 이 파일 전용 스타일
+// 게시물 1개. 받은 props를 헤더/이미지/액션/캡션/댓글로 나눠 넘김
 const FeedItem = ({
   username,
   profileImage,
@@ -19,12 +18,14 @@ const FeedItem = ({
   minutesAgo,
   likeCount,
   commentCount,
+  onDelete
 }) => {
   return (
     <article className={style.post}>
       <FeedItemHeader
         username={username}
         profileImage={profileImage}
+        onDelete={onDelete}
         />
 
         <div className={style.imageContainer}>
