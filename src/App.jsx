@@ -1,22 +1,29 @@
 import { useState, useEffect } from "react";
 import Stories from "./components/Stories.jsx";
 import page from './components/FeedPage.module.scss';
+import stateStyles from './components/StatusMessage.module.scss';
 import FeedList from "./components/FeedList.jsx";
 
 const App = () => {
   const [posts, setPosts] = useState([]);
   // 고른 유저. null이면 전체, 같은 유저를 다시 누르면 해제
   const [selectedUser, setSelectedUser] = useState(null);
-  console.log('① 그려짐 — posts', posts.length, '개');
+  // 받아오는 중이면 스켈레톤, 실패하면 에러 문구
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // selectedUser가 바뀔 때마다 다시 fetch. 이전 요청은 abort
   useEffect(() => { 
     const controller = new AbortController();
+    let cancelled = false;
 
     const loadPosts = async () => {
       const url = selectedUser
         ? `http://localhost:3001/posts?username=${selectedUser}`
         : 'http://localhost:3001/posts';
+
+      setIsLoading(true);
+      setError(null);
 
       try {
         const res = await fetch(url, {
@@ -32,12 +39,18 @@ const App = () => {
           return; 
         }
         console.error('게시물 주소가 잘못되었습니다.', error);
-      } 
+        setError('게시물을 불러오지 못했습니다.');
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
     };
 
     loadPosts();
 
     return () => {
+      cancelled = true;
       controller.abort();
     };
   }, [selectedUser]);
@@ -55,10 +68,15 @@ const App = () => {
   return (
     <main className={page.mainContent}>
       <Stories onSelect={handleSelectUser} />
-      <FeedList
-        posts={posts}
-        onDelete={handleDelete}
-      />  
+      {error ? (
+        <p className={stateStyles.errorText}>{error}</p>
+      ) : (
+        <FeedList
+          posts={posts}
+          isLoading={isLoading}
+          onDelete={handleDelete}
+        />
+      )}
     </main>
   );
 };
