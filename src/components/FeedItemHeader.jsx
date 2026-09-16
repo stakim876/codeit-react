@@ -28,10 +28,14 @@ const FeedItemHeader = ({
               </a>
           </div>
       </div>
-      <button type='button' className={styles.optionsButton} onClick={onDelete}>
-        <FaEllipsis />
-      </button>
-    </header>
+      <button
+        type="button"
+        className={styles.optionsButton}
+        onClick={onDelete}
+      >
+         <FaEllipsis/>
+        </button>  
+      </header>
   );
 };
 
