@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import styles from './Stories.module.scss';
 import StoryItem from './StoryItem.jsx';
 
-const Stories = () => {
+const Stories = ({ onSelect }) => {
   // 처음엔 빈 배열. 서버에서 받으면 setStories로 다시 그림
   const [stories, setStories] = useState([]);
 
@@ -22,16 +22,16 @@ const Stories = () => {
     })();
   }, [])
 
-
   return (
     <div className={styles.storiesContainer}>
       <div className={styles.storiesList}>
         {stories.map((story) => (
-        <StoryItem  
-          key={story.id}
-          username={story.username}
-          profileImage={`https://picsum.photos/seed/${story.username}/50/50`}
-          unseen={story.unseen}
+          <StoryItem  
+            key={story.id}
+            username={story.username}
+            profileImage={`https://picsum.photos/seed/${story.username}/50/50`}
+            unseen={story.unseen}
+            onSelect={() => onSelect(story.username)}
           />
         ))}
       </div>

@@ -1,9 +1,9 @@
 import styles from './Stories.module.scss';
 
-// unseen이면 컬러 링을 보여 줌
-const StoryItem = ({ username, profileImage, unseen }) => {
+// unseen이면 컬러 링. 클릭하면 그 유저 피드를 보여 줌
+const StoryItem = ({ username, profileImage, unseen, onSelect }) => {
   return (
-    <div className={styles.storyItem}>
+    <div className={styles.storyItem} onClick={onSelect}>
       <div className={styles.storyAvatar}>
         {unseen && <div className={styles.storyRing}></div>}
         <img
