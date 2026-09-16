@@ -20,7 +20,7 @@ const Stories = ({ onSelect }) => {
         console.error('스토리를 가져오지 못했어요.', error);
       }
     })();
-  }, [])
+  }, []);
 
   return (
     <div className={styles.storiesContainer}>
