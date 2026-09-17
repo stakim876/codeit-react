@@ -1,6 +1,6 @@
 import styles from './FeedItem.module.scss';
 
-// 댓글 n개 보기 버튼. toLocaleString()은 128 → 128, 1240 → 1,240
+// 댓글 n개. 부모가 +1 하면 여기도 다시 그려짐
 const FeedItemComments = ({ commentCount }) => {
   return (
     <div className={styles.commentSection}>

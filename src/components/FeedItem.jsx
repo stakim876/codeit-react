@@ -18,7 +18,8 @@ const FeedItem = ({
   minutesAgo,
   likeCount,
   commentCount,
-  onDelete
+  onDelete,
+  onAddComment,
 }) => {
   return (
     <article className={style.post}>
@@ -49,7 +50,8 @@ const FeedItem = ({
 
         <CommentArea>
           <FeedItemComments commentCount={commentCount} />
-          <CommentForm />
+          {/* 댓글 폼에 진동벨을 내려줌 */}
+          <CommentForm onAddComment={onAddComment} />
           </CommentArea>    
     </article>
   );

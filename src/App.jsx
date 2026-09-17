@@ -7,6 +7,7 @@ import FeedList from './components/FeedList.jsx';
 const PER_PAGE = 2;
 
 const App = () => {
+  // 데이터배열을 상태로 관리
   const [posts, setPosts] = useState([]);
   // 새로고침해도 마지막에 고른 유저를 다시 씀
   const [selectedUser, setSelectedUser] = useState(() =>
@@ -18,10 +19,9 @@ const App = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [nextPage, setNextPage] = useState(null);
 
-  // 목록 맨 아래 감시 지점. 화면에 보이면 다음 페이지
+  // loading tag를 저장하기 위한 ref
   const loaderRef = useRef(null);
 
-  // 고른 유저를 localStorage에 저장. 해제하면 지움
   useEffect(() => {
     if (selectedUser) {
       localStorage.setItem('lastUser', selectedUser);
@@ -30,7 +30,6 @@ const App = () => {
     }
   }, [selectedUser]);
 
-  // selectedUser나 pageNumber가 바뀌면 fetch. 새 페이지는 뒤에 이어 붙임
   useEffect(() => {
     const controller = new AbortController();
     let cancelled = false;
@@ -53,6 +52,7 @@ const App = () => {
           throw new Error(`서버가${res.status}로 답했어요`);
         }
         const envelope = await res.json();
+        // 새 페이지는 뒤에 이어 붙임
         setPosts((current) => [...current, ...envelope.data]);
         setNextPage(envelope.next);
       } catch (err) {
@@ -76,8 +76,33 @@ const App = () => {
     };
   }, [selectedUser, pageNumber]);
 
-  // 그 id만 목록에서 빼 줌
+  // 무한 스크롤 옵저버 처리
+  useEffect(() => {
+    if (nextPage === null || isLoading) {
+      return;
+    }
+
+    const target = loaderRef.current;
+    if (target === null) {
+      return;
+    }
+
+    // 옵저버를 생성해서 감시를 맡김
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setPageNumber((current) => current + 1);
+      }
+    });
+
+    // 감시대상을 지정
+    observer.observe(target);
+
+    return () => observer.disconnect();
+  }, [isLoading, nextPage]);
+
+  // 삭제신호를 울릴 수 있는 진동벨 함수를 내린다.
   const handleDelete = (id) => {
+    // 지운다는 것은 -> 필터링한다는 것
     setPosts(posts.filter((post) => post.id !== id));
   };
 
@@ -88,27 +113,16 @@ const App = () => {
     setPosts([]);
   };
 
-  // 아래 감시 지점이 보이면 pageNumber + 1. 다음 페이지가 없거나 로딩 중이면 멈춤
-  useEffect(() => { 
-    if (nextPage === null || isLoading) {
-      return;
-    }
-
-    const target = loaderRef.current;
-    if (target === null) {
-      return;
-    }
-
-    const observer = new IntersectionObserver((entries) => { 
-      if (entries[0].isIntersecting) {
-        setPageNumber(current => current + 1);
-      }
-    });
-
-    observer.observe(target);
-
-    return () => observer.disconnect();
-  }, [isLoading, nextPage]);
+  // 댓글 개수 처리를 위한 진동벨. 그 id만 map으로 골라서 +1
+  const handleAddComment = (id) => {
+    setPosts((current) =>
+      current.map((post) =>
+        post.id === id
+          ? { ...post, commentCount: post.commentCount + 1 }
+          : post,
+      ),
+    );
+  };
 
   return (
     <main className={page.mainContent}>
@@ -117,12 +131,15 @@ const App = () => {
       {error ? (
         <p className={stateStyles.errorText}>{error}</p>
       ) : (
-        <FeedList
-          posts={posts}
-          isLoading={isLoading}
-          onDelete={handleDelete}
-          loaderRef={loaderRef}
-        />
+        <>
+          <FeedList
+            posts={posts}
+            isLoading={isLoading}
+            onDelete={handleDelete}
+            onAddComment={handleAddComment}
+            loaderRef={loaderRef}
+          />
+        </>
       )}
     </main>
   );
