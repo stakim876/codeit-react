@@ -1,7 +1,6 @@
 import styles from './FeedItem.module.scss';
 import { FaEllipsis } from 'react-icons/fa6';
 
-// 게시물 위쪽: 프로필 + 유저명. 옵션 버튼을 누르면 onDelete
 const FeedItemHeader = ({
   username,
   profileImage = 'https://picsum.photos/seed/default/40/40',

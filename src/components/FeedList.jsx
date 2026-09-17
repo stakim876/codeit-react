@@ -2,7 +2,7 @@ import styles from './FeedList.module.scss';
 import gridStyles from './PostGrid.module.scss';
 import FeedItem from './FeedItem.jsx';
 
-// 로딩 중 가짜 카드. 실제 데이터 대신 회색 박스만 보여 줌
+
 const FeedSkeleton = () => (
   <div className={styles.skeletonPost}>
     <div className={styles.skeletonHeader}>
@@ -22,8 +22,9 @@ const FeedSkeleton = () => (
   </div>
 );
 
-const FeedList = ({ posts, isLoading, onDelete, loaderRef }) => {
-  // 로딩도 아니고 목록도 비면 안내 문구
+
+
+const FeedList = ({ posts, isLoading, onDelete, onAddComment, loaderRef }) => {
   if (!isLoading && posts.length === 0) {
     return <p className={gridStyles.noPosts}>게시물이 없습니다.</p>;
   }
@@ -43,14 +44,13 @@ const FeedList = ({ posts, isLoading, onDelete, loaderRef }) => {
             likeCount={post.likeCount}
             commentCount={post.commentCount}
             onDelete={() => onDelete(post.id)}
+            onAddComment={() => onAddComment(post.id)} // 이 게시물 id를 실어서 넘김
           />
         ))}
       </div>
-      {/* 이 지점이 화면에 보이면 다음 페이지를 불러옴 */}
       <div
         ref={loaderRef}
-        className={styles.loader}
-      >
+        className={styles.loader}>
         {isLoading && (
           <>
             <FeedSkeleton />

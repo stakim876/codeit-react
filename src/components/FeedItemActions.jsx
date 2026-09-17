@@ -8,7 +8,6 @@ import {
   FaRegPaperPlane,
 } from 'react-icons/fa6';
 
-// 좋아요 토글. liked가 true면 채운 하트+1, false면 빈 하트-1
 const FeedItemActions = ({ likeCount }) => {
 
   const [like, setLike] = useState({
@@ -16,7 +15,7 @@ const FeedItemActions = ({ likeCount }) => {
     count: likeCount
   });
 
-  // liked를 뒤집고, 이미 눌렀으면 -1 아니면 +1
+  // 좋아요 버튼에 붙은 이벤트 핸들러
   const handleLike = () => {
     setLike({
       ...like,
