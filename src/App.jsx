@@ -3,6 +3,7 @@ import Stories from './components/Stories.jsx';
 import page from './components/FeedPage.module.scss';
 import stateStyles from './components/StatusMessage.module.scss';
 import FeedList from './components/FeedList.jsx';
+import CreateFeedModal from './components/CreateFeedModal.jsx';
 
 const PER_PAGE = 2;
 
@@ -18,6 +19,9 @@ const App = () => {
 
   const [pageNumber, setPageNumber] = useState(1);
   const [nextPage, setNextPage] = useState(null);
+
+  // 새 게시물 모달을 열지 말지
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   // loading tag를 저장하기 위한 ref
   const loaderRef = useRef(null);
@@ -124,8 +128,19 @@ const App = () => {
     );
   };
 
+  // 피드 생성 처리를 위한 진동벨. 새 글을 목록 맨 앞에 넣음
+  const handleCreate = (createdPost) => {
+    setPosts((current) => [createdPost, ...current]);
+  };
+
   return (
     <main className={page.mainContent}>
+      <button
+        type='button'
+        onClick={() => setIsCreateOpen(true)}>
+        새 게시물
+      </button>
+
       <Stories onSelect={handleSelectUser} />
 
       {error ? (
@@ -140,6 +155,14 @@ const App = () => {
             loaderRef={loaderRef}
           />
         </>
+      )}
+
+      {/* 열려 있을 때만 모달을 그림. onCreate로 새 글을 부모에 넘김 */}
+      {isCreateOpen && (
+        <CreateFeedModal
+          onClose={() => setIsCreateOpen(false)}
+          onCreate={handleCreate}
+        />
       )}
     </main>
   );
