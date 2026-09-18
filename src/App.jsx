@@ -4,13 +4,15 @@ import page from './components/FeedPage.module.scss';
 import stateStyles from './components/StatusMessage.module.scss';
 import FeedList from './components/FeedList.jsx';
 import CreateFeedModal from './components/CreateFeedModal.jsx';
+// fetch 대신 axios 모듈을 부른다. URL 조립과 data 꺼내기는 api.js가 맡는다
+import { postApi } from './services/api.js';
+import axios from 'axios';
 
 const PER_PAGE = 2;
 
 const App = () => {
   // 데이터배열을 상태로 관리
   const [posts, setPosts] = useState([]);
-  // 새로고침해도 마지막에 고른 유저를 다시 씀
   const [selectedUser, setSelectedUser] = useState(() =>
     localStorage.getItem('lastUser'),
   );
@@ -20,7 +22,6 @@ const App = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [nextPage, setNextPage] = useState(null);
 
-  // 새 게시물 모달을 열지 말지
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   // loading tag를 저장하기 위한 ref
@@ -41,26 +42,25 @@ const App = () => {
     const loadPosts = async () => {
       const condition = `_page=${pageNumber}&_per_page=${PER_PAGE}`;
 
-      const url = selectedUser
-        ? `http://localhost:3001/posts?username=${selectedUser}&${condition}`
-        : `http://localhost:3001/posts?${condition}`;
+      const query = selectedUser
+        ? `username=${selectedUser}&${condition}`
+        : condition;
 
       setIsLoading(true);
       setError(null);
 
       try {
-        const res = await fetch(url, {
+        // interceptor가 data만 주므로 envelope는 바로 { data, next }
+        // signal을 넘기면 언마운트/재요청 때 이전 요청을 취소할 수 있다
+        const envelope = await postApi.getPage(query, {
           signal: controller.signal,
         });
-        if (!res.ok) {
-          throw new Error(`서버가${res.status}로 답했어요`);
-        }
-        const envelope = await res.json();
-        // 새 페이지는 뒤에 이어 붙임
+
         setPosts((current) => [...current, ...envelope.data]);
         setNextPage(envelope.next);
       } catch (err) {
-        if (err.name === 'AbortError') {
+        // abort()하면 axios가 취소 에러를 던진다. 화면 에러로 취급하지 않는다
+        if (axios.isCancel(err)) {
           return;
         }
         console.error('게시물 주소가 잘못되었습니다.', err);
@@ -105,19 +105,31 @@ const App = () => {
   }, [isLoading, nextPage]);
 
   // 삭제신호를 울릴 수 있는 진동벨 함수를 내린다.
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
+    // 백업
+    const previous = posts;
     // 지운다는 것은 -> 필터링한다는 것
     setPosts(posts.filter((post) => post.id !== id));
+
+    try {
+      // 화면을 먼저 지우고, 서버 DELETE가 실패하면 백업으로 되돌린다
+      await postApi.remove(id);
+    } catch (err) {
+      console.error('게시물을 지우지 못했어요.', err);
+      setPosts(previous);
+    }
   };
 
-  // 유저를 바꾸면 1페이지부터 다시. 같은 유저를 다시 누르면 해제
   const handleSelectUser = (username) => {
+    // console.log('스토리쪽으로 진동벨 전달~', username);
+    // console.log('현재 선택된 유저: ', selectedUser);
+    // console.log('지금 막 선택한 유저: ', username);
     setSelectedUser((current) => (current === username ? null : username));
     setPageNumber(1);
     setPosts([]);
   };
 
-  // 댓글 개수 처리를 위한 진동벨. 그 id만 map으로 골라서 +1
+  // 댓글 개수 처리를 위한 진동벨 함수 생성
   const handleAddComment = (id) => {
     setPosts((current) =>
       current.map((post) =>
@@ -128,7 +140,7 @@ const App = () => {
     );
   };
 
-  // 피드 생성 처리를 위한 진동벨. 새 글을 목록 맨 앞에 넣음
+  // 모달이 만든 게시물을 피드 맨 앞에 붙인다
   const handleCreate = (createdPost) => {
     setPosts((current) => [createdPost, ...current]);
   };
@@ -157,7 +169,6 @@ const App = () => {
         </>
       )}
 
-      {/* 열려 있을 때만 모달을 그림. onCreate로 새 글을 부모에 넘김 */}
       {isCreateOpen && (
         <CreateFeedModal
           onClose={() => setIsCreateOpen(false)}

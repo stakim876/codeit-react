@@ -1,6 +1,6 @@
+// ~/instagram-react/src/components/StoryItem.jsx
 import styles from './Stories.module.scss';
 
-// unseen이면 컬러 링. 클릭하면 그 유저 피드를 보여 줌
 const StoryItem = ({ username, profileImage, unseen, onSelect }) => {
   return (
     <div className={styles.storyItem} onClick={onSelect}>

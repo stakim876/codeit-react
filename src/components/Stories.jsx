@@ -1,26 +1,26 @@
+// ~/instagram-react/src/components/Stories.jsx
 import { useState, useEffect } from 'react';
+import { storyApi } from '../services/api.js';
 import styles from './Stories.module.scss';
 import StoryItem from './StoryItem.jsx';
 
+
 const Stories = ({ onSelect }) => {
-  // 처음엔 빈 배열. 서버에서 받으면 setStories로 다시 그림
+  
   const [stories, setStories] = useState([]);
 
-  // []면 처음 한 번만 실행. 서버에서 stories를 가져옴
+  // 처음 한 번만 스토리를 가져온다. interceptor 덕분에 found는 바로 배열이다
   useEffect(() => {
-    (async () => { 
+    (async () => {
       try {
-        const response = await fetch('http://localhost:3001/stories');
-        if (!response.ok) {
-          throw new Error(`서버가${response.status}로 답했어요`);
-        }
-        const data = await response.json();
-        setStories(data);
+        const found = await storyApi.getAll();
+        setStories(found);
       } catch (error) {
         console.error('스토리를 가져오지 못했어요.', error);
       }
     })();
   }, []);
+  
 
   return (
     <div className={styles.storiesContainer}>
