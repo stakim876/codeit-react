@@ -1,3 +1,4 @@
+// ~/instagram-react/src/components/FeedItem.jsx
 import FeedItemHeader from './FeedItemHeader.jsx';
 import FeedItemActions from './FeedItemActions.jsx';
 import FeedItemContent from './FeedItemContent.jsx';
@@ -5,11 +6,11 @@ import FeedItemComments from './FeedItemComments.jsx';
 import CommentForm from './CommentForm.jsx';
 import CommentArea from './CommentArea.jsx';
 
-import style from './FeedItem.module.scss';
+import styles from './FeedItem.module.scss';
 import carousel from './Carousel.module.scss';
 
-// 게시물 1개. 받은 props를 헤더/이미지/액션/캡션/댓글로 나눠 넘김
 const FeedItem = ({
+  postId,
   username,
   profileImage,
   postImage,
@@ -22,37 +23,39 @@ const FeedItem = ({
   onAddComment,
 }) => {
   return (
-    <article className={style.post}>
+    <article className={styles.post}>
       <FeedItemHeader
         username={username}
         profileImage={profileImage}
         onDelete={onDelete}
-        />
+      />
 
-        <div className={style.imageContainer}>
-          <div className={carousel.carouselSlide}>
-            <img
-              src={postImage}
-              alt={postAlt}
-            />  
-          </div>
-        </div>
-
-        <FeedItemActions likeCount={likeCount} />
-
-        <div className={style.content}>
-          <FeedItemContent
-            username={username}
-            content={content}
-            minutesAgo={minutesAgo}
+      <div className={styles.imageContainer}>
+        <div className={carousel.carouselSlide}>
+          <img
+            src={postImage}
+            alt={postAlt}
           />
         </div>
+      </div>
 
-        <CommentArea>
-          <FeedItemComments commentCount={commentCount} />
-          {/* 댓글 폼에 진동벨을 내려줌 */}
-          <CommentForm onAddComment={onAddComment} />
-          </CommentArea>    
+      <FeedItemActions
+        postId={postId}
+        likeCount={likeCount}
+      />
+
+      <div className={styles.content}>
+        <FeedItemContent
+          username={username}
+          content={content}
+          minutesAgo={minutesAgo}
+        />
+      </div>
+
+      <CommentArea>
+        <FeedItemComments commentCount={commentCount} />
+        <CommentForm onAddComment={onAddComment} />
+      </CommentArea>
     </article>
   );
 };

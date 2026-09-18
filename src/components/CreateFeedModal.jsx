@@ -1,9 +1,11 @@
+// ~/instagram-react/src/components/CreateFeedModal.jsx
 import { FaArrowLeft, FaImages, FaXmark, FaSpinner } from 'react-icons/fa6';
 import styles from './CreateFeedModal.module.scss';
 import { useState, useRef } from 'react';
 import carousel from './Carousel.module.scss';
+import { postApi } from '../services/api';
 
-// 고른 파일을 문자열로 바꿈. JSON으로 POST할 때 씀
+// 이미지를 문자열로 변환하는 헬퍼함수
 const readAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -15,13 +17,12 @@ const readAsDataUrl = (file) =>
 const CreateFeedModal = ({ onClose, onCreate }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  // 보내는 중이면 버튼 잠그고 스피너
+
   const [isSending, setIsSending] = useState(false);
 
-  // 숨긴 file input. 버튼이 대신 클릭할 때 씀
   const fileInputRef = useRef(null);
 
-  // 파일을 고르면 미리보기와 올릴 파일을 같이 저장
+  // 파일 업로드 이벤트 핸들러
   const handleFileChange = (event) => {
     const file = event.target.files[0];
 
@@ -33,42 +34,32 @@ const CreateFeedModal = ({ onClose, onCreate }) => {
     fileInputRef.current.value = '';
   };
 
-  // 숨긴 input을 대신 클릭
+  // 컴퓨터에서 선택 버튼 클릭 이벤트 핸들러
   const handlePick = () => {
+    // input.file을 대리로 클릭하게 만듬
     fileInputRef.current.click();
   };
 
-  // 파일을 문자열로 바꿔 POST. 성공하면 부모 진동벨을 울리고 닫음
+  // 사진을 문자열로 바꾼 뒤 POST로 서버에 올리고, 성공하면 부모 피드에 붙인다
   const handleShare = async () => {
     setIsSending(true);
 
     try {
       const postImage = await readAsDataUrl(selectedFile);
 
-      const response = await fetch('http://localhost:3001/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: 'soongu',
-          profileImage: 'https://picsum.photos/seed/soongu/40/40',
-          postImage,
-          postAlt: '내가 올린 사진',
-          content: '하하호호 새로운 피드!!',
-          minutesAgo: 0,
-          likeCount: 0,
-          commentCount: 0,
-        }),
+      // interceptor가 만든 게시물 객체를 바로 돌려준다
+      const response = await postApi.create({
+        username: 'soongu',
+        profileImage: 'https://picsum.photos/seed/soongu/40/40',
+        postImage,
+        postAlt: '내가 올린 사진',
+        content: '하하호호 새로운 피드!!',
+        minutesAgo: 0,
+        likeCount: 0,
+        commentCount: 0,
       });
 
-      if (!response.ok) {
-        throw new Error(`서버가${response.status}로 답했어요`);
-      }
-
-      const data = await response.json();
-
-      onCreate(data);
+      onCreate(response);
       onClose();
     } catch (error) {
       console.error('게시물을 올리지 못했어요.', error);
@@ -78,7 +69,6 @@ const CreateFeedModal = ({ onClose, onCreate }) => {
 
   return (
     <div className={styles.modalContainer}>
-      {/* 배경이나 X를 누르면 닫힘 */}
       <div
         className={styles.modalBackdrop}
         onClick={onClose}

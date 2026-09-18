@@ -1,14 +1,14 @@
+// ~/instagram-rea ct/src/components/CommentForm.jsx
 import { useState } from 'react';
 import styles from './FeedItem.module.scss';
 
-// 댓글 입력칸. 제출하면 부모 진동벨을 울리고 칸을 비움
+
 const CommentForm = ({ onAddComment }) => {
   const [text, setText] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // 빈 글이면 안 올림
     if (text.trim() === '') {
       return;
     }

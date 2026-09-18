@@ -1,6 +1,8 @@
+// ~/instagram-react/src/components/FeedList.jsx
 import styles from './FeedList.module.scss';
 import gridStyles from './PostGrid.module.scss';
 import FeedItem from './FeedItem.jsx';
+import stateStyles from './StatusMessage.module.scss';
 
 
 const FeedSkeleton = () => (
@@ -35,6 +37,7 @@ const FeedList = ({ posts, isLoading, onDelete, onAddComment, loaderRef }) => {
         {posts.map((post) => (
           <FeedItem
             key={post.id}
+            postId={post.id} // 좋아요 PATCH에 쓸 게시물 id
             username={post.username}
             profileImage={post.profileImage}
             postImage={post.postImage}
@@ -44,7 +47,7 @@ const FeedList = ({ posts, isLoading, onDelete, onAddComment, loaderRef }) => {
             likeCount={post.likeCount}
             commentCount={post.commentCount}
             onDelete={() => onDelete(post.id)}
-            onAddComment={() => onAddComment(post.id)} // 이 게시물 id를 실어서 넘김
+            onAddComment={() => onAddComment(post.id)}
           />
         ))}
       </div>
