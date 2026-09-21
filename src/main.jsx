@@ -3,14 +3,25 @@ import { createRoot } from 'react-dom/client';
 import './styles/global.scss';
 import App from './App.jsx';
 import { PostsProvider } from './contexts/PostsContext.jsx';
+import { BrowserRouter } from 'react-router';
+import Practice3 from './lab/p2-18/practice3.jsx';
 
-// StrictMode는 개발 중 effect를 두 번 실행한다.
-// 게시물을 뒤에 이어 붙이는 방식이라 두 번 돌면 같은 글이 중복된다. 그래서 끈다
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './styles/global.scss';
+import App from './App.jsx';
+import { PostsProvider } from './contexts/PostsContext.jsx';
+import { BrowserRouter } from 'react-router';
+import Practice3 from './lab/p2-18/practice3.jsx';
+
 createRoot(document.querySelector('#root')).render(
-  // <StrictMode>
-  // App 아래 어디서든 usePostsContext를 쓰려면 Provider로 감싸야 한다
-  <PostsProvider>
-    <App />
-  </PostsProvider>,
-  // </StrictMode>,
+  <StrictMode>
+    {/* BrowserRouter가 있어야 URL에 따라 화면을 바꿀 수 있다 */}
+    <BrowserRouter>
+      <PostsProvider>
+        <App />
+        {/* 라우터 연습 화면: <Practice3 /> */}
+      </PostsProvider>
+    </BrowserRouter>
+  </StrictMode>,
 );

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styles from '../../components/Stories.module.scss';
 
 const initialStories = [
-  { id: 1, username: 'jaehoon', unseen: true },
+  { id: 1, username: 'seungtae', unseen: true },
   { id: 2, username: 'minji', unseen: true },
   { id: 3, username: 'seungwoo', unseen: false },
   { id: 4, username: 'yuna', unseen: true },

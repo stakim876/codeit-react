@@ -1,48 +1,24 @@
-import { useState } from 'react';
-import Stories from './components/Stories.jsx';
-import page from './components/FeedPage.module.scss';
-import stateStyles from './components/StatusMessage.module.scss';
-import FeedList from './components/FeedList.jsx';
-import CreateFeedModal from './components/CreateFeedModal.jsx';
-import UserSearch from './components/UserSearch.jsx';
+import { Route, Routes } from 'react-router';
+import FeedPage from './pages/FeedPage.jsx';
+import ProfilePage from './pages/ProfilePage.jsx';
 
-import { usePostsContext } from './contexts/PostsContext.jsx';
-
-const App = () => {
-  
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-
-  // props로 안 내리고 창고에서 필요한 것만 꺼낸다
-  const { error, addPost, selectUser } = usePostsContext();
-
+const App = () => { 
   return (
-    <main className={page.mainContent}>
-      <button
-        type='button'
-        onClick={() => setIsCreateOpen(true)}>
-        새 게시물
-      </button>
-
-      <UserSearch onSearch={selectUser} />
-
-      <Stories onSelect={selectUser} />
-
-      {error ? (
-        <p className={stateStyles.errorText}>{error}</p>
-      ) : (
-        <>
-          <FeedList />
-        </>
-      )}
-
-      {isCreateOpen && (
-        <CreateFeedModal
-          onClose={() => setIsCreateOpen(false)}
-          onCreate={addPost}
-        />
-      )}
-    </main>
+    // path가 바뀌면 아래 Route 중 맞는 화면만 보여 준다
+    <Routes>
+      <Route
+        path='/'
+        element={
+            <FeedPage />
+        }
+      />
+      <Route
+        path='/seungtae'
+        element={<ProfilePage />}
+      />
+    </Routes>
   );
 };
+
 
 export default App;

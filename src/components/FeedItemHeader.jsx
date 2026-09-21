@@ -2,6 +2,7 @@
 import styles from './FeedItem.module.scss';
 import { FaEllipsis } from 'react-icons/fa6';
 import { usePostsContext } from '../contexts/PostsContext';
+import { Link } from 'react-router';
 
 const FeedItemHeader = ({
   postId,
@@ -15,8 +16,9 @@ const FeedItemHeader = ({
   return (
     <header className={styles.header}>
       <div className={styles.userInfo}>
-        <a
-          href={`/${username}`}
+        {/* a 태그 대신 Link: 새로고침 없이 /username 화면으로 이동 */}
+        <Link
+          to={`/${username}`}
           className={styles.profileLink}>
           <div className={styles.profileImage}>
             <img
@@ -24,13 +26,13 @@ const FeedItemHeader = ({
               alt={`${username}의 프로필`}
             />
           </div>
-        </a>
+        </Link>
         <div className={styles.userDetails}>
-          <a
-            href={`/${username}`}
+          <Link
+            to={`/${username}`}
             className={styles.username}>
             {username}
-          </a>
+          </Link>
         </div>
       </div>
       <button
