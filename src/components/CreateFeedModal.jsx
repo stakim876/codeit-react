@@ -39,15 +39,13 @@ const CreateFeedModal = ({ onClose, onCreate }) => {
     // input.file을 대리로 클릭하게 만듬
     fileInputRef.current.click();
   };
-
-  // 사진을 문자열로 바꾼 뒤 POST로 서버에 올리고, 성공하면 부모 피드에 붙인다
+  // 공유하기 버튼을 눌렀을 때 이벤트 핸들러
   const handleShare = async () => {
     setIsSending(true);
 
     try {
       const postImage = await readAsDataUrl(selectedFile);
 
-      // interceptor가 만든 게시물 객체를 바로 돌려준다
       const response = await postApi.create({
         username: 'soongu',
         profileImage: 'https://picsum.photos/seed/soongu/40/40',
