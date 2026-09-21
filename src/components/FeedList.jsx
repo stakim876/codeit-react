@@ -2,7 +2,7 @@
 import styles from './FeedList.module.scss';
 import gridStyles from './PostGrid.module.scss';
 import FeedItem from './FeedItem.jsx';
-import stateStyles from './StatusMessage.module.scss';
+import { usePostsContext } from '../contexts/PostsContext.jsx';
 
 
 const FeedSkeleton = () => (
@@ -26,9 +26,14 @@ const FeedSkeleton = () => (
 
 
 
-const FeedList = ({ posts, isLoading, onDelete, onAddComment, loaderRef }) => {
+const FeedList =  () => {
+
+
+  // 목록 데이터는 props 대신 창고에서 꺼낸다
+  const { posts, isLoading, loaderRef } = usePostsContext();
+
   if (!isLoading && posts.length === 0) {
-    return <p className={gridStyles.noPosts}>게시물이 없습니다.</p>;
+    return <p className={gridStyles.noPosts}>게시물이 없습니다.</p>
   }
 
   return (
@@ -46,8 +51,6 @@ const FeedList = ({ posts, isLoading, onDelete, onAddComment, loaderRef }) => {
             minutesAgo={post.minutesAgo}
             likeCount={post.likeCount}
             commentCount={post.commentCount}
-            onDelete={() => onDelete(post.id)}
-            onAddComment={() => onAddComment(post.id)}
           />
         ))}
       </div>

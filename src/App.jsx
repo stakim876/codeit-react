@@ -4,23 +4,16 @@ import page from './components/FeedPage.module.scss';
 import stateStyles from './components/StatusMessage.module.scss';
 import FeedList from './components/FeedList.jsx';
 import CreateFeedModal from './components/CreateFeedModal.jsx';
-import { usePosts } from './components/hooks/usePosts.js';
 import UserSearch from './components/UserSearch.jsx';
 
-const App = () => {
- 
- const [isCreateOpen, setIsCreateOpen] = useState(false);
+import { usePostsContext } from './contexts/PostsContext.jsx';
 
-  const {
-    posts,
-    isLoading,
-    error,
-    loaderRef,
-    removePost,
-    countUpComment,
-    addPost,
-    selectUser,
-  } = usePosts();
+const App = () => {
+  
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  // props로 안 내리고 창고에서 필요한 것만 꺼낸다
+  const { error, addPost, selectUser } = usePostsContext();
 
   return (
     <main className={page.mainContent}>
@@ -38,13 +31,7 @@ const App = () => {
         <p className={stateStyles.errorText}>{error}</p>
       ) : (
         <>
-          <FeedList
-            posts={posts}
-            isLoading={isLoading}
-            onDelete={removePost}
-            onAddComment={countUpComment}
-            loaderRef={loaderRef}
-          />
+          <FeedList />
         </>
       )}
 
