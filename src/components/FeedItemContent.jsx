@@ -1,6 +1,6 @@
+// ~/instagram-react/src/components/FeedItemContent.jsx
 import FeedItemCaption from './FeedItemCaption.jsx';
 import styles from './FeedItem.module.scss';
-
 
 const FeedItemContent = ({ username, content, minutesAgo }) => {
   return (

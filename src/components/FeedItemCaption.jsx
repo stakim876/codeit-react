@@ -1,3 +1,4 @@
+// ~/instagram-react/src/components/FeedItemCaption.jsx
 const FeedItemCaption = ({ content, minutesAgo }) => {
   return (
     <>

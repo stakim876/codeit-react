@@ -1,3 +1,4 @@
+// ~/instagram-react/src/components/FeedItemHeader.jsx'
 import styles from './FeedItem.module.scss';
 import { FaEllipsis } from 'react-icons/fa6';
 
@@ -28,7 +29,6 @@ const FeedItemHeader = ({
           </div>
       </div>
       <button
-        type="button"
         className={styles.optionsButton}
         onClick={onDelete}
       >

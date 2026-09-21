@@ -1,149 +1,26 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import Stories from './components/Stories.jsx';
 import page from './components/FeedPage.module.scss';
 import stateStyles from './components/StatusMessage.module.scss';
 import FeedList from './components/FeedList.jsx';
 import CreateFeedModal from './components/CreateFeedModal.jsx';
-// fetch 대신 axios 모듈을 부른다. URL 조립과 data 꺼내기는 api.js가 맡는다
-import { postApi } from './services/api.js';
-import axios from 'axios';
-
-const PER_PAGE = 2;
+import { usePosts } from './components/hooks/usePosts.js';
+import UserSearch from './components/UserSearch.jsx';
 
 const App = () => {
-  // 데이터배열을 상태로 관리
-  const [posts, setPosts] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(() =>
-    localStorage.getItem('lastUser'),
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+ 
+ const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const [pageNumber, setPageNumber] = useState(1);
-  const [nextPage, setNextPage] = useState(null);
-
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-
-  // loading tag를 저장하기 위한 ref
-  const loaderRef = useRef(null);
-
-  useEffect(() => {
-    if (selectedUser) {
-      localStorage.setItem('lastUser', selectedUser);
-    } else {
-      localStorage.removeItem('lastUser');
-    }
-  }, [selectedUser]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    let cancelled = false;
-
-    const loadPosts = async () => {
-      const condition = `_page=${pageNumber}&_per_page=${PER_PAGE}`;
-
-      const query = selectedUser
-        ? `username=${selectedUser}&${condition}`
-        : condition;
-
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        // interceptor가 data만 주므로 envelope는 바로 { data, next }
-        // signal을 넘기면 언마운트/재요청 때 이전 요청을 취소할 수 있다
-        const envelope = await postApi.getPage(query, {
-          signal: controller.signal,
-        });
-
-        setPosts((current) => [...current, ...envelope.data]);
-        setNextPage(envelope.next);
-      } catch (err) {
-        // abort()하면 axios가 취소 에러를 던진다. 화면 에러로 취급하지 않는다
-        if (axios.isCancel(err)) {
-          return;
-        }
-        console.error('게시물 주소가 잘못되었습니다.', err);
-        setError('게시물을 불러오지 못했습니다.');
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadPosts();
-
-    return () => {
-      cancelled = true;
-      controller.abort();
-    };
-  }, [selectedUser, pageNumber]);
-
-  // 무한 스크롤 옵저버 처리
-  useEffect(() => {
-    if (nextPage === null || isLoading) {
-      return;
-    }
-
-    const target = loaderRef.current;
-    if (target === null) {
-      return;
-    }
-
-    // 옵저버를 생성해서 감시를 맡김
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setPageNumber((current) => current + 1);
-      }
-    });
-
-    // 감시대상을 지정
-    observer.observe(target);
-
-    return () => observer.disconnect();
-  }, [isLoading, nextPage]);
-
-  // 삭제신호를 울릴 수 있는 진동벨 함수를 내린다.
-  const handleDelete = async (id) => {
-    // 백업
-    const previous = posts;
-    // 지운다는 것은 -> 필터링한다는 것
-    setPosts(posts.filter((post) => post.id !== id));
-
-    try {
-      // 화면을 먼저 지우고, 서버 DELETE가 실패하면 백업으로 되돌린다
-      await postApi.remove(id);
-    } catch (err) {
-      console.error('게시물을 지우지 못했어요.', err);
-      setPosts(previous);
-    }
-  };
-
-  const handleSelectUser = (username) => {
-    // console.log('스토리쪽으로 진동벨 전달~', username);
-    // console.log('현재 선택된 유저: ', selectedUser);
-    // console.log('지금 막 선택한 유저: ', username);
-    setSelectedUser((current) => (current === username ? null : username));
-    setPageNumber(1);
-    setPosts([]);
-  };
-
-  // 댓글 개수 처리를 위한 진동벨 함수 생성
-  const handleAddComment = (id) => {
-    setPosts((current) =>
-      current.map((post) =>
-        post.id === id
-          ? { ...post, commentCount: post.commentCount + 1 }
-          : post,
-      ),
-    );
-  };
-
-  // 모달이 만든 게시물을 피드 맨 앞에 붙인다
-  const handleCreate = (createdPost) => {
-    setPosts((current) => [createdPost, ...current]);
-  };
+  const {
+    posts,
+    isLoading,
+    error,
+    loaderRef,
+    removePost,
+    countUpComment,
+    addPost,
+    selectUser,
+  } = usePosts();
 
   return (
     <main className={page.mainContent}>
@@ -153,7 +30,9 @@ const App = () => {
         새 게시물
       </button>
 
-      <Stories onSelect={handleSelectUser} />
+      <UserSearch onSearch={selectUser} />
+
+      <Stories onSelect={selectUser} />
 
       {error ? (
         <p className={stateStyles.errorText}>{error}</p>
@@ -162,8 +41,8 @@ const App = () => {
           <FeedList
             posts={posts}
             isLoading={isLoading}
-            onDelete={handleDelete}
-            onAddComment={handleAddComment}
+            onDelete={removePost}
+            onAddComment={countUpComment}
             loaderRef={loaderRef}
           />
         </>
@@ -172,7 +51,7 @@ const App = () => {
       {isCreateOpen && (
         <CreateFeedModal
           onClose={() => setIsCreateOpen(false)}
-          onCreate={handleCreate}
+          onCreate={addPost}
         />
       )}
     </main>
