@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { postApi } from '../../services/api';
+import { postApi } from '../services/api';
 import axios from 'axios';
 
 const PER_PAGE = 2;

@@ -19,15 +19,13 @@ const FeedItem = ({
   minutesAgo,
   likeCount,
   commentCount,
-  onDelete,
-  onAddComment,
 }) => {
   return (
     <article className={styles.post}>
       <FeedItemHeader
+        postId={postId}
         username={username}
         profileImage={profileImage}
-        onDelete={onDelete}
       />
 
       <div className={styles.imageContainer}>
@@ -54,7 +52,8 @@ const FeedItem = ({
 
       <CommentArea>
         <FeedItemComments commentCount={commentCount} />
-        <CommentForm onAddComment={onAddComment} />
+        {/* 댓글 폼은 창고의 countUpComment를 쓰므로 id만 넘긴다 */}
+        <CommentForm postId={postId} />
       </CommentArea>
     </article>
   );

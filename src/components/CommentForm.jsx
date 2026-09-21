@@ -1,9 +1,13 @@
 // ~/instagram-rea ct/src/components/CommentForm.jsx
 import { useState } from 'react';
 import styles from './FeedItem.module.scss';
+import { usePostsContext } from '../contexts/PostsContext';
 
 
-const CommentForm = ({ onAddComment }) => {
+const CommentForm = ({ postId }) => {
+  // 댓글 개수 올리기도 창고에서 꺼낸다
+  const { countUpComment } = usePostsContext();
+
   const [text, setText] = useState('');
 
   const handleSubmit = (event) => {
@@ -13,7 +17,7 @@ const CommentForm = ({ onAddComment }) => {
       return;
     }
 
-    onAddComment();
+    countUpComment(postId);
     setText('');
   };
 

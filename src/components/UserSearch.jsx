@@ -1,7 +1,7 @@
 // ~/instagram-react/src/components/UserSearch.jsx
 import { useState, useMemo } from "react";
 import styles from './SearchPanel.module.scss';
-import { debounce } from './utils/debounce';
+import { debounce } from '../utils/debounce';
 
 const UserSearch = ({ onSearch }) => {
   const [query, setQuery] = useState('');
