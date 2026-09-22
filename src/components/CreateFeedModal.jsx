@@ -39,6 +39,7 @@ const CreateFeedModal = ({ onClose, onCreate }) => {
     // input.file을 대리로 클릭하게 만듬
     fileInputRef.current.click();
   };
+  
   // 공유하기 버튼을 눌렀을 때 이벤트 핸들러
   const handleShare = async () => {
     setIsSending(true);

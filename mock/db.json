@@ -2,8 +2,8 @@
   "posts": [
     {
       "id": "1",
-      "username": "jaehoon",
-      "profileImage": "https://picsum.photos/seed/jaehoon/40/40",
+      "username": "seungtae",
+      "profileImage": "https://picsum.photos/seed/seungtae/40/40",
       "postImage": "https://picsum.photos/seed/post1/600/600",
       "postAlt": "한강에서 찍은 노을 사진",
       "content": "오늘 한강 노을 실화냐 🌇",
@@ -90,8 +90,8 @@
     },
     {
       "id": "9",
-      "username": "jaehoon",
-      "profileImage": "https://picsum.photos/seed/jaehoon/40/40",
+      "username": "seungtae",
+      "profileImage": "https://picsum.photos/seed/seungtae/40/40",
       "postImage": "https://picsum.photos/seed/post9/600/600",
       "postAlt": "자전거와 강변 도로",
       "content": "오늘 라이딩 40km 🚲",
@@ -178,8 +178,8 @@
     },
     {
       "id": "17",
-      "username": "jaehoon",
-      "profileImage": "https://picsum.photos/seed/jaehoon/40/40",
+      "username": "seungtae",
+      "profileImage": "https://picsum.photos/seed/seungtae/40/40",
       "postImage": "https://picsum.photos/seed/post17/600/600",
       "postAlt": "등산로 정상 표지석",
       "content": "오늘 산 정상 찍고 왔습니다 ⛰",
@@ -268,7 +268,7 @@
   "stories": [
     {
       "id": "1",
-      "username": "jaehoon",
+      "username": "seungtae",
       "unseen": true
     },
     {
