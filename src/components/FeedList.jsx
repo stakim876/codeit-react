@@ -3,7 +3,7 @@ import styles from './FeedList.module.scss';
 import gridStyles from './PostGrid.module.scss';
 import FeedItem from './FeedItem.jsx';
 import { usePostsContext } from '../contexts/PostsContext.jsx';
-
+import { useEffect, useRef } from 'react';
 
 const FeedSkeleton = () => (
   <div className={styles.skeletonPost}>
@@ -24,16 +24,33 @@ const FeedSkeleton = () => (
   </div>
 );
 
+const FeedList = () => {
+  const { posts, isLoading, hasNext, loadMore } = usePostsContext();
+  const loaderRef = useRef(null);
 
+  useEffect(() => {
+    if (!hasNext || isLoading) {
+      return;
+    }
 
-const FeedList =  () => {
+    const target = loaderRef.current;
+    if (target === null) {
+      return;
+    }
 
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        loadMore();
+      }
+    });
 
-  // 목록 데이터는 props 대신 창고에서 꺼낸다
-  const { posts, isLoading, loaderRef } = usePostsContext();
+    observer.observe(target);
+
+    return () => observer.disconnect();
+  }, [hasNext, isLoading, loadMore]);
 
   if (!isLoading && posts.length === 0) {
-    return <p className={gridStyles.noPosts}>게시물이 없습니다.</p>
+    return <p className={gridStyles.noPosts}>게시물이 없습니다.</p>;
   }
 
   return (
@@ -42,7 +59,7 @@ const FeedList =  () => {
         {posts.map((post) => (
           <FeedItem
             key={post.id}
-            postId={post.id} // 좋아요 PATCH에 쓸 게시물 id
+            postId={post.id}
             username={post.username}
             profileImage={post.profileImage}
             postImage={post.postImage}
