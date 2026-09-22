@@ -1,18 +1,54 @@
 // ~/instagram-react/src/pages/ProfilePage.jsx
 import styles from '../components/ProfilePage.module.scss';
+import stateStyles from '../components/StatusMessage.module.scss';
 import ProfileImage from '../components/ProfileImage.jsx';
-
-const profile = {
-  username: 'seungtae',
-  name: '김승태',
-  profileImage: 'https://picsum.photos/seed/seungtae/150/150',
-  postCount: 3,
-  followerCount: 1240,
-  followingCount: 312,
-};
+import { useParams } from 'react-router';
+import { useEffect, useState } from 'react';
+import { profileApi } from '../services/api.js';
 
 function ProfilePage() {
-  // 주소 /seungtae 또는 /login 일 때 나오는 프로필 화면
+  // 주소 /seungtae 이면 username은 'seungtae'
+  const { username } = useParams();
+
+  const [profile, setProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // 주소의 이름이 바뀔 때마다 그 유저 프로필을 다시 가져온다
+  useEffect(() => {
+    const loadProfile = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const found = await profileApi.getProfile(username);
+        // json-server는 배열을 주니까 첫 번째만 쓴다
+        setProfile(found[0] ?? null);
+      } catch (err) {
+        console.error('프로필을 가져오지 못했어요.', err);
+        setError('프로필을 불러오지 못했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadProfile();
+  }, [username]);
+
+  // 로딩 → 에러 → 없음 → 화면 순으로 보여 준다
+  if (isLoading) {
+    return <p className={stateStyles.loadingText}>불러오는 중이에요</p>;
+  }
+
+  if (error !== null) {
+    return <p className={stateStyles.errorText}>{error}</p>;
+  }
+
+  if (profile === null) {
+    return (
+      <p className={stateStyles.errorText}>{username} 님의 프로필이 없어요.</p>
+    );
+  }
+
   return (
     <>
       <main className={styles.profileMain}>

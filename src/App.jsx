@@ -1,27 +1,25 @@
 import { Route, Routes } from 'react-router';
 import FeedPage from './pages/FeedPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
-import Sidebar from './components/Sidebar.jsx';
+import RootLayout from './layouts/RootLayout.jsx';
 
 const App = () => { 
   return (
     <>
-      {/* 사이드바는 주소가 바뀌어도 그대로 두고, Routes만 화면을 갈아끼운다 */}
-      <Sidebar />
-
       <Routes>
-        <Route
-          path='/'
-          element={<FeedPage />}
-        />
-        <Route
-          path='/seungtae'
-          element={<ProfilePage />}
-        />
-        <Route
-          path='/login'
-          element={<ProfilePage />}
-        />
+        {/* RootLayout이 사이드바를 두고, Outlet 자리에 아래 화면이 들어간다 */}
+        <Route element={<RootLayout />}>
+          <Route
+            path="/"
+            element={<FeedPage />}
+          />
+          {/* :username 자리에 주소 값이 들어가서 ProfilePage가 꺼낸다 */}
+          <Route
+            path='/:username'
+            element={<ProfilePage />}
+          />
+        </Route>
+        
       </Routes>
     </>
   );
