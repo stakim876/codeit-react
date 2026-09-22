@@ -32,9 +32,10 @@ function Sidebar() {
       </div>
 
       <div className={styles.menuContainer}>
-        {/* NavLink: 지금 주소와 같으면 active 클래스가 붙는다 */}
+        {/* end: /seungtae 에서도 홈이 켜지지 않게, / 일 때만 active */}
         <NavLink
           to='/'
+          end
           className={styles.menuItem}>
           <FaHouse size={24} />
           <span className={styles.menuText}>홈</span>

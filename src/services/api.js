@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const POSTS = '/posts';
 const STORIES = '/stories';
+const PROFILES = '/profiles';
 
 // 공통 주소(baseURL)를 가진 axios 인스턴스. 이후 호출은 /posts 처럼 뒷부분만 적는다
 const api = axios.create({
@@ -28,6 +29,11 @@ export const postApi = {
 export const storyApi = {
   // GET /stories  → 스토리 배열
   getAll: () => api.get(STORIES),
+};
+
+export const profileApi = {
+  // GET /profiles?username=seungtae  → 그 유저 프로필 배열
+  getProfile: (username) => api.get(`${PROFILES}?username=${username}`),
 };
 
 
