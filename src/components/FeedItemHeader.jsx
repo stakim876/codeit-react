@@ -16,7 +16,7 @@ const FeedItemHeader = ({
   return (
     <header className={styles.header}>
       <div className={styles.userInfo}>
-        {/* a 태그 대신 Link: 새로고침 없이 /username 화면으로 이동 */}
+        {/* 이름/사진을 누르면 /username 주소로 이동한다 */}
         <Link
           to={`/${username}`}
           className={styles.profileLink}>

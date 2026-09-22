@@ -52,7 +52,6 @@ const FeedItem = ({
 
       <CommentArea>
         <FeedItemComments commentCount={commentCount} />
-        {/* 댓글 폼은 창고의 countUpComment를 쓰므로 id만 넘긴다 */}
         <CommentForm postId={postId} />
       </CommentArea>
     </article>

@@ -1,36 +1,29 @@
 // ~/instagram-react/src/pages/FeedPage.jsx
-import { useState } from 'react';
 import { usePostsContext } from '../contexts/PostsContext.jsx';
 import page from '../components/FeedPage.module.scss';
 import stateStyles from '../components/StatusMessage.module.scss';
 import FeedList from '../components/FeedList.jsx';
 import Stories from '../components/Stories.jsx';
 import UserSearch from '../components/UserSearch.jsx';
-import CreateFeedModal from '../components/CreateFeedModal.jsx';
 
 const FeedPage = () => {
-  // 예전 App 화면. 주소 / 일 때 이 컴포넌트가 나온다
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const { error, addPost, selectUser } = usePostsContext();
 
+  const { error, selectUser } = usePostsContext();
+
+  // 주소가 / 일 때 나오는 피드 화면
   return (
-    <main className={page.mainContent}>
-      <button
-        type='button'
-        onClick={() => setIsCreateOpen(true)}>
-        새 게시물
-      </button>
-      <UserSearch onSearch={selectUser} />
-      <Stories onSelect={selectUser} />
-      {error ? <p className={stateStyles.errorText}>{error}</p> : <FeedList />}
-      {isCreateOpen && (
-        <CreateFeedModal
-          onClose={() => setIsCreateOpen(false)}
-          onCreate={addPost}
-        />
-      )}
-    </main>
+    <>
+      <main className={page.mainContent}>
+        <UserSearch onSearch={selectUser} />
+        <Stories onSelect={selectUser} />
+        {error ? (
+          <p className={stateStyles.errorText}>{error}</p>
+        ) : (
+          <FeedList />
+        )}      
+      </main>
+    </>
   );
-};
+}
 
 export default FeedPage;
