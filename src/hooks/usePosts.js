@@ -1,30 +1,25 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { postApi } from '../services/api';
 import axios from 'axios';
+import { useSearchParams } from 'react-router';
 
 const PER_PAGE = 2;
 
 export const usePosts = () => {
-  // 데이터배열을 상태로 관리
+  // 주소의 ?user=minji 같은 쿼리를 읽고 바꾼다
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedUser = searchParams.get('user');
+
   const [posts, setPosts] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(() =>
-    localStorage.getItem('lastUser'),
-  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const [pageNumber, setPageNumber] = useState(1);
   const [nextPage, setNextPage] = useState(null);
 
-  // loading tag를 저장하기 위한 ref
-  const loaderRef = useRef(null);
-
+  // 검색 유저가 바뀌면 1페이지부터 다시 불러온다
   useEffect(() => {
-    if (selectedUser) {
-      localStorage.setItem('lastUser', selectedUser);
-    } else {
-      localStorage.removeItem('lastUser');
-    }
+    setPageNumber(1);
+    setPosts([]);
   }, [selectedUser]);
 
   useEffect(() => {
@@ -33,7 +28,6 @@ export const usePosts = () => {
 
     const loadPosts = async () => {
       const condition = `_page=${pageNumber}&_per_page=${PER_PAGE}`;
-
       const query = selectedUser
         ? `username=${selectedUser}&${condition}`
         : condition;
@@ -69,35 +63,8 @@ export const usePosts = () => {
     };
   }, [selectedUser, pageNumber]);
 
-  // 무한 스크롤 옵저버 처리
-  useEffect(() => {
-    if (nextPage === null || isLoading) {
-      return;
-    }
-
-    const target = loaderRef.current;
-    if (target === null) {
-      return;
-    }
-
-    // 옵저버를 생성해서 감시를 맡김
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setPageNumber((current) => current + 1);
-      }
-    });
-
-    // 감시대상을 지정
-    observer.observe(target);
-
-    return () => observer.disconnect();
-  }, [isLoading, nextPage]);
-
-  // 삭제신호를 울릴 수 있는 진동벨 함수를 내린다.
   const removePost = async (id) => {
-    // 백업
     const previous = posts;
-    // 지운다는 것은 -> 필터링한다는 것
     setPosts(posts.filter((post) => post.id !== id));
 
     try {
@@ -108,13 +75,20 @@ export const usePosts = () => {
     }
   };
 
+  // 스토리/검색을 누르면 ?user=이름 을 달거나 같은 이름이면 뗀다
   const selectUser = useCallback((username) => {
-    setSelectedUser((current) => (current === username ? null : username));
-    setPageNumber(1);
-    setPosts([]);
-  }, []);
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current);
 
-  // 댓글 개수 처리를 위한 진동벨 함수 생성
+      if (next.get('user') === username) {
+        next.delete('user');
+      } else {
+        next.set('user', username);
+      }
+      return next;
+    });
+  }, [setSearchParams]);
+
   const countUpComment = (id) => {
     setPosts((current) =>
       current.map((post) =>
@@ -125,20 +99,23 @@ export const usePosts = () => {
     );
   };
 
-  // 피드 생성 처리를 위한 진동벨 함수 생성
   const addPost = (createdPost) => {
     setPosts((current) => [createdPost, ...current]);
   };
+
+  const loadMore = useCallback(() => {
+    setPageNumber((current) => current + 1);
+  }, []);
 
   return {
     posts,
     isLoading,
     error,
-    loaderRef,
+    hasNext: nextPage !== null,
+    loadMore,
     addPost,
     removePost,
     countUpComment,
     selectUser,
   };
-
 };

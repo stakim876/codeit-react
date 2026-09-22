@@ -1,19 +1,26 @@
 // ~/instagram-react/src/components/StoryItem.jsx
+import { usePostsContext  } from '../contexts/PostsContext';
 import styles from './Stories.module.scss';
 
-const StoryItem = ({ username, profileImage, unseen, onSelect }) => {
+const StoryItem = ({ username, profileImage, unseen }) => {
+
+  // 클릭하면 창고의 selectUser가 주소에 ?user=이름을 단다
+  const { selectUser } = usePostsContext();
+
   return (
-    <div className={styles.storyItem} onClick={onSelect}>
+    <div
+      className={styles.storyItem}
+      onClick={() => selectUser(username)}>
       <div className={styles.storyAvatar}>
         {unseen && <div className={styles.storyRing}></div>}
         <img
           src={profileImage}
           alt={`${username}의 스토리`}
-          />
+        />  
         </div>
         <span className={styles.storyUsername}>{username}</span>  
-    </div>
-  );  
+      </div>
+  );
 };
 
 export default StoryItem;

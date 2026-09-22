@@ -8,6 +8,8 @@ const UserSearch = ({ onSearch }) => {
 
   const searchLater = useMemo(() => debounce(onSearch, 400), [onSearch]);
   
+  // 타이핑하면 400ms 뒤에 selectUser가 호출되어 ?user= 가 바뀐다
+  
   const handleInputChange = (event) => {
 
     setQuery(event.target.value);
